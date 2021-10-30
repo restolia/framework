@@ -1,5 +1,14 @@
 {
   "name": "restolia/framework",
+  "authors": [
+    {
+      "name": "Ben Osborne",
+      "email": "hello@benosborne.io"
+    }
+  ],
+  "license": [
+    "MIT"
+  ],
   "require": {
     "php": "^8.0",
     "symfony/http-foundation": "^5.3",
