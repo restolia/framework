@@ -10,7 +10,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Restolia\\": "src/Restolio"
+      "Restolia\\": "src/Restolia"
     }
   },
   "autoload-dev": {
