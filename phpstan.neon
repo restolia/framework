@@ -1,0 +1,3 @@
+parameters:
+    ignoreErrors:
+        - '#Parameter \#1 \$callable of method DI\\Container::call\(\) expects callable\(\)#'
