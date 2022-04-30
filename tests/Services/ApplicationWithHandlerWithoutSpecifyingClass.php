@@ -1,22 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Tests\Services;
 
 use FastRoute\RouteCollector;
+use Restolia\Foundation\Application;
 use Restolia\Http\Response;
-use Restolia\Service\Service;
 
-class ServiceWithConstructor extends Service
+class ApplicationWithHandlerWithoutSpecifyingClass extends Application
 {
-    public function __construct()
-    {
-    }
-
     public function routes(RouteCollector $router): void
     {
-        $router->get('/', [self::class, 'handle']);
+        // a route that only specifies the method to call
+        $router->get('/', 'handle');
     }
 
     public function handle(Response $response): void

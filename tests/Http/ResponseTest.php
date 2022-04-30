@@ -7,6 +7,12 @@ use Restolia\Http\Response;
 
 class ResponseTest extends TestCase
 {
+    public function testJsonReturnsResponseClass(): void
+    {
+        $response = new Response();
+        $this->assertSame($response, $response->json([]));
+    }
+
     public function testJsonSetsHeader(): void
     {
         $response = new Response();

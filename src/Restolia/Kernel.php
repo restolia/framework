@@ -15,9 +15,9 @@ class Kernel
 {
     private static Container $container;
 
-    public static function boot(string $service): void
+    public static function boot(string $app): void
     {
-        new self($service);
+        new self($app);
     }
 
     private function __construct(private string $service)
@@ -25,7 +25,7 @@ class Kernel
         $this->setupContainer();
         $this->bindDependencies();
 
-        $this->bootService();
+        $this->bootApplication();
         $this->resolve();
     }
 
@@ -43,15 +43,32 @@ class Kernel
         self::$container->set(RouteCollector::class, new RouteCollector(new Std(), new MarkBased()));
     }
 
-    private function bootService(): void
+    private function bootApplication(): void
     {
         $this->bindProviders();
 
         if (method_exists($this->service, '__construct')) {
             self::$container->call([$this->service, '__construct']);
         }
-        self::$container->call([$this->service, 'boot']);
         self::$container->call([$this->service, 'routes']);
+    }
+
+    private function bindProviders(): void
+    {
+        $providers = self::$container->call([$this->service, 'providers']);
+        if (empty($providers)) {
+            return;
+        }
+
+        foreach ($providers as $provider) {
+            self::$container->call([$provider, 'register']);
+
+            [$bindable, $instance] = self::$container->get($provider)->get();
+            self::$container->set(
+                $bindable,
+                $instance
+            );
+        }
     }
 
     private function resolve(): void
@@ -86,24 +103,6 @@ class Kernel
                 } else {
                     self::$container->call([$this->service, $handler], $vars ?? []);
                 }
-        }
-    }
-
-    private function bindProviders(): void
-    {
-        $providers = self::$container->call([$this->service, 'providers']);
-        if (empty($providers)) {
-            return;
-        }
-
-        foreach ($providers as $provider) {
-            self::$container->call([$provider, 'register']);
-
-            [$bindable, $instance] = self::$container->get($provider)->get();
-            self::$container->set(
-                $bindable,
-                $instance
-            );
         }
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Restolia\Service;
+namespace Restolia\Foundation;
 
 abstract class Provider
 {
@@ -16,9 +16,6 @@ abstract class Provider
         $this->instance = $instance;
     }
 
-    /**
-     * @return array<int, object|string>
-     */
     public function get(): array
     {
         return [$this->bindable, $this->instance];

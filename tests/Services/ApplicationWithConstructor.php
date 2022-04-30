@@ -1,15 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Tests\Services;
 
 use FastRoute\RouteCollector;
+use Restolia\Foundation\Application;
 use Restolia\Http\Response;
-use Restolia\Service\Service;
 
-class ServiceWithoutConstructor extends Service
+class ApplicationWithConstructor extends Application
 {
+    public function __construct()
+    {
+    }
+
     public function routes(RouteCollector $router): void
     {
         $router->get('/', [self::class, 'handle']);

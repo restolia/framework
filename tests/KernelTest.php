@@ -1,23 +1,21 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Tests\Http;
+namespace Tests;
 
 use PHPUnit\Framework\TestCase;
 use Restolia\Http\Response;
 use Restolia\Kernel;
-use Tests\Services\ServiceForRouteWithParameter;
-use Tests\Services\ServiceWithHandlerWithoutSpecifyingClass;
-use Tests\Services\ServiceWithConstructor;
-use Tests\Services\ServiceWithoutConstructor;
+use Tests\Services\ApplicationForRouteWithParameter;
+use Tests\Services\ApplicationWithHandlerWithoutSpecifyingClass;
+use Tests\Services\ApplicationWithConstructor;
+use Tests\Services\ApplicationWithoutConstructor;
 
 class KernelTest extends TestCase
 {
     public function testCanBootServiceWithoutConstructor(): void
     {
         ob_start();
-        Kernel::boot(ServiceWithoutConstructor::class);
+        Kernel::boot(ApplicationWithoutConstructor::class);
         ob_end_flush();
 
         $this->assertSame('ok', ob_get_contents());
@@ -27,7 +25,7 @@ class KernelTest extends TestCase
     public function testCanBootServiceWithConstructor(): void
     {
         ob_start();
-        Kernel::boot(ServiceWithConstructor::class);
+        Kernel::boot(ApplicationWithConstructor::class);
         ob_end_flush();
 
         $this->assertSame('ok', ob_get_contents());
@@ -37,7 +35,7 @@ class KernelTest extends TestCase
     public function testCanCallHandlerWithoutSpecifyingClass(): void
     {
         ob_start();
-        Kernel::boot(ServiceWithHandlerWithoutSpecifyingClass::class);
+        Kernel::boot(ApplicationWithHandlerWithoutSpecifyingClass::class);
         ob_end_flush();
 
         $this->assertSame('ok', ob_get_contents());
@@ -49,7 +47,7 @@ class KernelTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/1';
 
         ob_start();
-        Kernel::boot(ServiceForRouteWithParameter::class);
+        Kernel::boot(ApplicationForRouteWithParameter::class);
         ob_end_flush();
 
         $this->assertSame('1', ob_get_contents());
@@ -61,7 +59,7 @@ class KernelTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/not-found';
 
         ob_start();
-        Kernel::boot(ServiceWithConstructor::class);
+        Kernel::boot(ApplicationWithConstructor::class);
         ob_end_flush();
 
         $this->assertEmpty(ob_get_contents());

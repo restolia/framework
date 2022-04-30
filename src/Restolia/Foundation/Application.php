@@ -1,14 +1,14 @@
 <?php
 
-namespace Restolia\Service;
+namespace Restolia\Foundation;
 
 use FastRoute\RouteCollector;
 
-abstract class Service
+abstract class Application
 {
     /**
      * Returns an array of providers that you would
-     * like your service to have available.
+     * like your application to have available.
      *
      * @return array<string>
      */
@@ -18,17 +18,7 @@ abstract class Service
     }
 
     /**
-     * The boot method is called before handle()
-     * and should be used to perform any setup tasks.
-     *
-     * @return void
-     */
-    public function boot(): void
-    {
-    }
-
-    /**
-     * Define your services routes.
+     * Define your application's routes.
      *
      * @param  RouteCollector  $router
      */

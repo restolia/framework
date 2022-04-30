@@ -1,14 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Tests\Services;
 
 use FastRoute\RouteCollector;
+use Restolia\Foundation\Application;
 use Restolia\Http\Response;
-use Restolia\Service\Service;
 
-class ServiceForRouteWithParameter extends Service
+class ApplicationForRouteWithParameter extends Application
 {
     public function routes(RouteCollector $router): void
     {
