@@ -8,6 +8,7 @@ use FastRoute\DataGenerator\MarkBased;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std;
+use Restolia\Foundation\Provider;
 use Restolia\Http\Response;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -15,18 +16,17 @@ class Kernel
 {
     private static Container $container;
 
-    public static function boot(string $app): void
+    public static function boot(string $app): Kernel
     {
-        new self($app);
+        return new self($app);
     }
 
-    private function __construct(private string $service)
+    private function __construct(private string $app)
     {
         $this->setupContainer();
         $this->bindDependencies();
 
         $this->bootApplication();
-        $this->resolve();
     }
 
     private function setupContainer(): void
@@ -47,23 +47,29 @@ class Kernel
     {
         $this->bindProviders();
 
-        if (method_exists($this->service, '__construct')) {
-            self::$container->call([$this->service, '__construct']);
+        if (method_exists($this->app, '__construct')) {
+            self::$container->call([$this->app, '__construct']);
         }
-        self::$container->call([$this->service, 'routes']);
+        self::$container->call([$this->app, 'routes']);
     }
 
     private function bindProviders(): void
     {
-        $providers = self::$container->call([$this->service, 'providers']);
+        $providers = self::$container->call([$this->app, 'providers']);
         if (empty($providers)) {
             return;
         }
 
         foreach ($providers as $provider) {
-            self::$container->call([$provider, 'register']);
+            if ($provider instanceof Provider) {
+                $provider->register();
+                [$bindable, $instance] = $provider->get();
+            } else {
+                self::$container->call([$provider, 'register']);
+                [$bindable, $instance] = self::$container->get($provider)->get();
+            }
 
-            [$bindable, $instance] = self::$container->get($provider)->get();
+
             self::$container->set(
                 $bindable,
                 $instance
@@ -71,7 +77,7 @@ class Kernel
         }
     }
 
-    private function resolve(): void
+    public function resolve(): void
     {
         /** @var Request $request */
         $request = self::$container->get(Request::class);
@@ -101,7 +107,7 @@ class Kernel
                 if (is_array($handler)) {
                     self::$container->call($handler, $vars ?? []);
                 } else {
-                    self::$container->call([$this->service, $handler], $vars ?? []);
+                    self::$container->call([$this->app, $handler], $vars ?? []);
                 }
         }
     }
@@ -109,5 +115,10 @@ class Kernel
     public static function make(string $implementation): mixed
     {
         return self::$container->get($implementation);
+    }
+
+    public static function set(string $implementation, mixed $instance): void
+    {
+        self::$container->set($implementation, $instance);
     }
 }
