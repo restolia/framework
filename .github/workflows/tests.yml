@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Unit & Feature
+    name: Test Suite
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:

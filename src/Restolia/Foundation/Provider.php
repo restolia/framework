@@ -16,6 +16,9 @@ abstract class Provider
         $this->instance = $instance;
     }
 
+    /**
+     * @return array<int, string|object>
+     */
     public function get(): array
     {
         return [$this->bindable, $this->instance];
