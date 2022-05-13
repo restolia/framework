@@ -35,4 +35,9 @@ class Environment
         }
         return false;
     }
+
+    public function get(string $name, mixed $default = null): mixed
+    {
+        return $_ENV[$name] ?? $default;
+    }
 }
