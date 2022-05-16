@@ -8,7 +8,7 @@ class Environment
 {
     public function __construct(string ...$paths)
     {
-        Dotenv::createImmutable($paths)->load();
+        Dotenv::createImmutable($paths)->safeLoad();
     }
 
     /**
