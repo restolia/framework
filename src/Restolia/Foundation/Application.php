@@ -3,6 +3,7 @@
 namespace Restolia\Foundation;
 
 use FastRoute\RouteCollector;
+use Symfony\Component\Console\Command\Command;
 
 abstract class Application
 {
@@ -20,7 +21,7 @@ abstract class Application
     /**
      * Define your application's CLI commands.
      *
-     * @return array
+     * @return array<Command>
      */
     abstract public function commands(): array;
 

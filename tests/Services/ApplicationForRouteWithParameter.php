@@ -5,9 +5,13 @@ namespace Tests\Services;
 use FastRoute\RouteCollector;
 use Restolia\Foundation\Application;
 use Restolia\Http\Response;
+use Symfony\Component\Console\Command\Command;
 
 class ApplicationForRouteWithParameter extends Application
 {
+    /**
+     * @return array<Command>
+     */
     public function commands(): array
     {
         return [];

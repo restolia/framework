@@ -97,6 +97,9 @@ class ' . $expectedName . '
         }
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public function handlerCases(): array
     {
         return [

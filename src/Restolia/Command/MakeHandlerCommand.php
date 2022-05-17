@@ -29,7 +29,7 @@ class MakeHandlerCommand extends Command
             return Command::FAILURE;
         }
 
-        file_put_contents($target, self::parseStub(file_get_contents(__DIR__ . '/stubs/Handler.stub'), $name));
+        file_put_contents($target, self::parseStub((string)file_get_contents(__DIR__ . '/stubs/Handler.stub'), $name));
 
         $output->writeln(sprintf('Handler created at "%s".', $target));
 
@@ -45,7 +45,7 @@ class MakeHandlerCommand extends Command
     {
         $name = preg_replace('/Handler$/', '', trim($name));
 
-        return ucwords($name);
+        return ucwords((string)$name);
     }
 
     private static function parseStub(string $contents, string $name): string

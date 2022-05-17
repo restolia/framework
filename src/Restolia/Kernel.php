@@ -14,6 +14,7 @@ use Restolia\Command\VersionCommand;
 use Restolia\Foundation\Provider;
 use Restolia\Http\Response;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -99,15 +100,22 @@ class Kernel
         }
     }
 
+    /**
+     * @param array<Command> $commands
+     * @return void
+     */
     private function registerCommands(array $commands): void
     {
         self::$container->call(
             [Application::class, 'addCommands'],
             [
-                [
-                    new VersionCommand(),
-                    new MakeHandlerCommand(),
-                ]
+                array_merge(
+                    [
+                        new VersionCommand(),
+                        new MakeHandlerCommand(),
+                    ],
+                    $commands
+                )
             ]
         );
     }
