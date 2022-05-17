@@ -8,8 +8,9 @@ use Restolia\Http\Response;
 
 class ApplicationWithConstructor extends Application
 {
-    public function __construct()
+    public function commands(): array
     {
+        return [];
     }
 
     public function routes(RouteCollector $router): void

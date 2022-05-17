@@ -8,6 +8,11 @@ use Restolia\Http\Response;
 
 class ApplicationWithHandlerWithoutSpecifyingClass extends Application
 {
+    public function commands(): array
+    {
+        return [];
+    }
+
     public function routes(RouteCollector $router): void
     {
         // a route that only specifies the method to call

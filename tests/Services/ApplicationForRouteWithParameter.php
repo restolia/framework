@@ -8,6 +8,11 @@ use Restolia\Http\Response;
 
 class ApplicationForRouteWithParameter extends Application
 {
+    public function commands(): array
+    {
+        return [];
+    }
+
     public function routes(RouteCollector $router): void
     {
         $router->get('/{id}', 'handle');

@@ -7,3 +7,4 @@ vendor/
 # Testing
 .phpunit.result.cache
 .phpunit.cache
+tests/temp

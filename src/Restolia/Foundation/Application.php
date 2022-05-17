@@ -18,9 +18,16 @@ abstract class Application
     }
 
     /**
+     * Define your application's CLI commands.
+     *
+     * @return array
+     */
+    abstract public function commands(): array;
+
+    /**
      * Define your application's routes.
      *
-     * @param  RouteCollector  $router
+     * @param RouteCollector $router
      */
     public function routes(RouteCollector $router): void
     {

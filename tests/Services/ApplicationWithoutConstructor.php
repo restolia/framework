@@ -8,6 +8,11 @@ use Restolia\Http\Response;
 
 class ApplicationWithoutConstructor extends Application
 {
+    public function commands(): array
+    {
+        return [];
+    }
+
     public function routes(RouteCollector $router): void
     {
         $router->get('/', [self::class, 'handle']);
