@@ -4,29 +4,41 @@ namespace Restolia;
 
 use DI\Container;
 use DI\ContainerBuilder;
+use Exception;
 use FastRoute\DataGenerator\MarkBased;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std;
+use Restolia\Command\MakeHandlerCommand;
+use Restolia\Command\VersionCommand;
 use Restolia\Foundation\Provider;
 use Restolia\Http\Response;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class Kernel
 {
+    public const VERSION = '2.1.2';
+
+    private string $app;
+
     private static Container $container;
 
-    public static function boot(string $app): Kernel
+    public function boot(string $app): Kernel
     {
-        return new self($app);
-    }
+        $this->app = $app;
 
-    private function __construct(private string $app)
-    {
         $this->setupContainer();
         $this->bindDependencies();
 
         $this->bootApplication();
+
+        return $this;
     }
 
     private function setupContainer(): void
@@ -38,19 +50,30 @@ class Kernel
 
     private function bindDependencies(): void
     {
-        self::$container->set(Request::class, Request::createFromGlobals());
-        self::$container->set(Response::class, new Response());
-        self::$container->set(RouteCollector::class, new RouteCollector(new Std(), new MarkBased()));
+        if ($this->isCli()) {
+            self::set(Application::class, new Application());
+            self::set(InputInterface::class, new ArgvInput());
+            self::set(OutputInterface::class, new ConsoleOutput());
+            return;
+        }
+
+        self::set(Request::class, Request::createFromGlobals());
+        self::set(Response::class, new Response());
+        self::set(RouteCollector::class, new RouteCollector(new Std(), new MarkBased()));
     }
 
     private function bootApplication(): void
     {
         $this->bindProviders();
-
         if (method_exists($this->app, '__construct')) {
             self::$container->call([$this->app, '__construct']);
         }
-        self::$container->call([$this->app, 'routes']);
+
+        if ($this->isCli()) {
+            $this->registerCommands(self::$container->call([$this->app, 'commands']));
+        } else {
+            self::$container->call([$this->app, 'routes']);
+        }
     }
 
     private function bindProviders(): void
@@ -75,6 +98,31 @@ class Kernel
                 $instance
             );
         }
+    }
+
+    /**
+     * @param array<Command> $commands
+     * @return void
+     */
+    private function registerCommands(array $commands): void
+    {
+        self::$container->call(
+            [Application::class, 'addCommands'],
+            [
+                array_merge(
+                    [
+                        new VersionCommand(),
+                        new MakeHandlerCommand(),
+                    ],
+                    $commands
+                )
+            ]
+        );
+    }
+
+    public function isCli(): bool
+    {
+        return php_sapi_name() === 'cli';
     }
 
     public function resolve(): void
@@ -110,6 +158,21 @@ class Kernel
                     self::$container->call([$this->app, $handler], $vars ?? []);
                 }
         }
+    }
+
+    /**
+     * Execute a command and return the exit code.
+     *
+     * @return int
+     * @throws Exception
+     */
+    public function handle(): int
+    {
+        return (self::make(Application::class))
+            ->run(
+                self::make(InputInterface::class),
+                self::make(OutputInterface::class),
+            );
     }
 
     public static function make(string $implementation): mixed

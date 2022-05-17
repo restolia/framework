@@ -3,6 +3,7 @@
 namespace Restolia\Foundation;
 
 use FastRoute\RouteCollector;
+use Symfony\Component\Console\Command\Command;
 
 abstract class Application
 {
@@ -18,9 +19,16 @@ abstract class Application
     }
 
     /**
+     * Define your application's CLI commands.
+     *
+     * @return array<Command>
+     */
+    abstract public function commands(): array;
+
+    /**
      * Define your application's routes.
      *
-     * @param  RouteCollector  $router
+     * @param RouteCollector $router
      */
     public function routes(RouteCollector $router): void
     {

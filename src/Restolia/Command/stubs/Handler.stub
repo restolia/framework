@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Handlers;
+
+use Restolia\Http\Response;
+use Symfony\Component\HttpFoundation\Request;
+
+class HandlerName
+{
+    public function handle(Request $request, Response $response): void
+    {
+        // TODO: implement me
+    }
+}
